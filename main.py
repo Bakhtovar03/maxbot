@@ -1,4 +1,5 @@
-﻿import logging
+﻿import asyncio
+import logging
 import os
 
 import redis.asyncio as redis
@@ -14,8 +15,12 @@ config = load_config()
 bot = Bot(config.bot.token)
 
 
+
 def main():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(
+        level=config.log.level,
+        format=config.log.format,
+    )
 
     redis_host = os.getenv("REDIS_HOST", "localhost")
     redis_port = int(os.getenv("REDIS_PORT", 6379))
@@ -33,4 +38,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

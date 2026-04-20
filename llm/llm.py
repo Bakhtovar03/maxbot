@@ -31,7 +31,7 @@ GIGA_KEY = env.str("GIGACHAT_KEY")
 
 # Синхронный клиент GigaChat
 giga = GigaChat(
-    #model='GigaChat-2-Pro',
+    model='GigaChat-2-Max',
     credentials=GIGA_KEY,
     verify_ssl_certs=False,
 )
@@ -50,7 +50,7 @@ async def giga_invoke_async(prompt_text: str) -> str:
 # 2. ЗАГРУЗКА YAML
 # ============================================================
 
-with open("LLM/rag.yaml", "r", encoding="utf-8") as f:
+with open("llm/rag.yaml", "r", encoding="utf-8") as f:
     data = yaml.safe_load(f)
 
 all_docs = []
@@ -138,10 +138,12 @@ all_docs.append(Document(page_content=policy_text, metadata={"type": "policy"}))
 
 embeddings = GigaChatEmbeddings(
     credentials=GIGA_KEY,
-    verify_ssl_certs=False
+    verify_ssl_certs=False,
+    model="EmbeddingsGigaR"
+
 )
 
-index_path = "LLM/faiss_yaml"
+index_path = "llm/faiss_yaml"
 
 if os.path.exists(index_path):
     db = FAISS.load_local(index_path, embeddings, allow_dangerous_deserialization=True)
@@ -203,7 +205,7 @@ rag_chain = (
                    | RunnableLambda(format_docs),
 
         # Берём последние сообщения
-        "history": RunnableLambda(lambda x: x.get("history", [])[-6:])
+        "history": RunnableLambda(lambda x: x.get("history", [])[0:])
     })
     | prompt
     | RunnableLambda(lambda msg: msg.to_string())

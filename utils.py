@@ -1,3 +1,5 @@
+from typing import Any
+
 from maxo.routing.filters import BaseFilter
 from maxo.routing.ctx import Ctx
 from maxo.routing.updates.message_created import MessageCreated
@@ -26,3 +28,54 @@ class IsAdmin(BaseFilter[MessageCreated]):
         return False
 
 
+
+def normalize_info(data:dict[str,Any]) -> str:
+
+    name = data["name"].split(" ")
+    first_name = name[0]
+    last_name = name[1]
+
+    courses =[]
+    certificates =''
+    passes =''
+    for course in data["courses_data"]:
+        normalize_course =(f'\n<b>Название курса:</b>\n'
+                           f'\n{course['course_name']}\n'
+                           )
+        if  'subscription' in course:
+            normalize_course +=(
+                            f'Цена:\n{course["subscription"]['price']}\n'
+                            f'Количество оплаченных занятий по абонементу:'
+                            f'\n{course['subscription']["visitCount"]}\n'
+                            f'Количество посещенных занятий:'
+                            f'\n{course['subscription']["visitedCount"]}\n\n')
+        else:
+            normalize_course +=f'\n⚠️Абонемент истёк⚠️\n'
+        courses.append(normalize_course)
+
+
+
+    for achievements in data["achievements"]['certificates']:
+        certificates += achievements + '\n'
+
+    for achievements in data["achievements"]["passes"]:
+        passes += achievements + '\n'
+
+    if certificates == '':
+        certificates = '-'
+
+    if passes == '':
+        passes = '-'
+
+    normalize_output = (f'<b>Обучающийся:🎒</b>\n'
+                        f'\n{first_name} {last_name}\n'
+                        f'\n<b>Дипломы:🧑‍🎓</b>\n'
+                        f'{certificates}\n'
+                        f'\n<b>Зачёты:✅</b>\n'
+                        f'{passes}\n'
+                        f'\n<b>Посещаемые курсы:👩‍💻👩‍🏫</b>\n'
+                        )
+    for course in courses:
+        normalize_output += f'{course}'
+
+    return normalize_output

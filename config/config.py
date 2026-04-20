@@ -17,7 +17,7 @@ class LogSettings:
 class Config:
     bot: MaxBot
     log: LogSettings
-
+    apiKey: str
 
 def load_config(path: str | None = None) -> Config:
     env = Env()
@@ -25,4 +25,5 @@ def load_config(path: str | None = None) -> Config:
     return Config(
         bot=MaxBot(token=env("BOT_TOKEN")),
         log=LogSettings(level=env("LOG_LEVEL"), format=env("LOG_FORMAT")),
+        apiKey=env("COMPANY_APIKEY")
     )
