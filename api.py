@@ -186,10 +186,11 @@ async def get_achievements(session: aiohttp.ClientSession, student_id: int,acces
 
     certificates =[]
     passes =[]
+    class_id = [698191,] #Группы для простовления дипломов [центр]
     response = await fetch_json(
         session,
         f"{BASE_URL}/userComments",
-        params={"userId": student_id},
+        params={"userId": student_id,'classId':class_id},
         access_token=access_token
     )
     for res in response['userComments']:
@@ -250,5 +251,5 @@ async def get_student(student_id: int) -> dict | None:
 # -------------------------
 # RUN
 if __name__ == "__main__":
-    result = asyncio.run(get_student(4047194))
+    result = asyncio.run(get_student(3387537))
     pprint.pprint(result)

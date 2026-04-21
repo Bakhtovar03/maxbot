@@ -65,7 +65,7 @@ async def enter_to_account(update: MessageCreated, facade:MessageCreatedFacade,s
             print(text)
             await facade.answer_text(
                 text=text,
-                keyboard=create_inline_keyboards('logout'),
+                keyboard=create_inline_keyboards('logout','продлить абонемент'),
                 format=TextFormat.HTML
             )
 
@@ -90,7 +90,7 @@ async def consultation_handler(callback: MessageCallback, facade: MessageCallbac
     await state.clear()
 
 # Обработка нажатия кнопки "Вернуться назад"
-@user_router.message_callback(MagicFilter(F.payload == 'logout') & StateFilter(FSMUser.personal_account))
+@user_router.message_callback(MagicFilter(F.payload == 'cancel') & StateFilter(FSMUser.personal_account))
 async def consultation_handler(callback: MessageCallback, facade: MessageCallbackFacade,state:FSMContext) -> None:
     keyboard = create_inline_keyboards(
         'sign_up',
